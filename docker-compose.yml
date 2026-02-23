@@ -1,0 +1,7 @@
+services:
+  dti-deck:
+    build: .
+    container_name: dti-deck
+    restart: unless-stopped
+    ports:
+      - "8087:80"

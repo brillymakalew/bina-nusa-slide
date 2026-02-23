@@ -1,5 +1,3 @@
-create a web app based on this. i want to put it in my VPS. i want it to have full screen button, then i can go next, prev on the full screen. make sure the button doesnt cover the content
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -124,7 +122,7 @@ create a web app based on this. i want to put it in my VPS. i want it to have fu
             border-radius: 12px;
             padding: 20px;
             border-left: 4px solid #22d3ee;
-            margin-top: 20px; /* Disesuaikan: menempatkan rationale tepat di bawah teks penjelasan */
+            margin-top: 20px;
         }
         .rationale-box.nusa-box { border-left-color: #10b981; }
         .rationale-box h4 { color: #22d3ee; font-size: 16px; margin-bottom: 8px; text-transform: uppercase; }
@@ -171,6 +169,51 @@ create a web app based on this. i want to put it in my VPS. i want it to have fu
             white-space: nowrap;
         }
         .survey-list.nusa-list .item-code { color: #10b981; }
+
+        /* RECAP GRID FOR DIMENSION SUMMARY SLIDES (VERBATIM FIT) */
+        .recap-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            width: 100%;
+            align-content: start;
+        }
+        .recap-card {
+            background-color: #0a0f1d; 
+            border: 1px solid rgba(34, 211, 238, 0.15); 
+            border-left: 4px solid #22d3ee; 
+            border-radius: 8px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.2);
+        }
+        .recap-card.nusa-recap-card {
+            border-color: rgba(16, 185, 129, 0.15);
+            border-left-color: #10b981;
+        }
+        .recap-card h4 {
+            font-size: 13px;
+            font-weight: 700;
+            color: #22d3ee;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .recap-card.nusa-recap-card h4 { color: #10b981; }
+        .recap-card ul {
+            list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 6px;
+        }
+        .recap-card li {
+            font-size: 11.5px; /* Dikecilkan sedikit agar text verbatim muat dalam 1 slide */
+            color: #cbd5e1; 
+            line-height: 1.4; 
+            display: flex; 
+            align-items: flex-start;
+        }
+        .recap-card li span {
+            font-weight: 700; color: #f8fafc; margin-right: 6px; white-space: nowrap; font-size: 11.5px;
+        }
 
         /* PAGINATED TABLES (NO SCROLL) */
         .paginated-table-container {
@@ -219,11 +262,79 @@ create a web app based on this. i want to put it in my VPS. i want it to have fu
         .dim-item { background: rgba(0,0,0,0.4); padding: 15px; border-radius: 8px; font-size: 12px; text-align: center; border: 1px solid rgba(34, 211, 238, 0.3); color: #cbd5e1; }
         .dim-item strong { display: block; color: #22d3ee; font-size: 16px; margin-bottom: 5px; }
 
-        /* WATERMARK ICONS */
+        /* WATERMARK ICONS & FAB */
         .watermark { position: absolute; right: -20px; bottom: -20px; font-size: 300px; color: rgba(255,255,255,0.02); z-index: 0; pointer-events: none;}
         .page-num { position: absolute; bottom: 20px; right: 40px; font-size: 12px; color: #64748b; font-weight: 600; letter-spacing: 1px; }
 
+        /* FAB Copy Button */
+        .copy-fab {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background-color: #10b981;
+            color: #020617;
+            padding: 15px 25px;
+            border-radius: 50px;
+            font-family: 'Inter', sans-serif;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            border: none;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+        }
+        .copy-fab:hover {
+            transform: translateY(-5px);
+            background-color: #059669;
+        }
+
     </style>
+    <script>
+        function copyCodeHTML() {
+            const btn = document.querySelector('.copy-fab');
+            const originalHTML = btn.innerHTML;
+            
+            // Sembunyikan tombol sementara agar tidak ikut ter-copy ke dalam kodenya
+            const parent = btn.parentNode;
+            parent.removeChild(btn);
+            
+            // Ambil semua HTML
+            const htmlContent = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
+            
+            // Kembalikan tombol ke tempatnya
+            parent.appendChild(btn);
+
+            // Proses copy ke clipboard menggunakan execCommand
+            const textArea = document.createElement("textarea");
+            textArea.value = htmlContent;
+            document.body.appendChild(textArea);
+            textArea.select();
+            
+            try {
+                document.execCommand('copy');
+                btn.innerHTML = '<i class="fa-solid fa-check"></i> Berhasil di-Copy!';
+                btn.style.backgroundColor = '#22c55e';
+                btn.style.color = '#fff';
+            } catch (err) {
+                btn.innerHTML = '<i class="fa-solid fa-xmark"></i> Gagal Copy';
+                btn.style.backgroundColor = '#ef4444';
+                btn.style.color = '#fff';
+            }
+            
+            document.body.removeChild(textArea);
+            
+            // Kembalikan status tombol setelah 3 detik
+            setTimeout(() => {
+                btn.innerHTML = originalHTML;
+                btn.style.backgroundColor = '#10b981';
+                btn.style.color = '#020617';
+            }, 3000);
+        }
+    </script>
 </head>
 <body>
 
@@ -336,6 +447,10 @@ create a web app based on this. i want to put it in my VPS. i want it to have fu
 <!-- ========================================== -->
 <!-- BINA: BUSINESS DIMENSION -->
 <!-- ========================================== -->
+<div class="slide-container separator-slide">
+    <div class="sub-label" style="color: #f8fafc;">Dimension B</div>
+    <h1 style="color: #22d3ee; font-size: 56px;">Business Strategy & Governance Alignment</h1>
+</div>
 
 <!-- B1 -->
 <div class="slide-container">
@@ -367,7 +482,7 @@ create a web app based on this. i want to put it in my VPS. i want it to have fu
 <div class="slide-container">
     <div class="slide-header">
         <div class="indicator-badge">B2</div>
-        <h2 class="slide-title">Integrasi keberlanjutan (bisnis & lingkungan)</h2>
+        <h2 class="slide-title">Integrasi keberlanjutan (bisnis & lingkungan) dalam strategi transformasi digital</h2>
     </div>
     <div class="layout-two-column">
         <div class="left-col">
@@ -394,7 +509,7 @@ create a web app based on this. i want to put it in my VPS. i want it to have fu
 <div class="slide-container">
     <div class="slide-header">
         <div class="indicator-badge">B3</div>
-        <h2 class="slide-title">Struktur tata kelola & akuntabilitas</h2>
+        <h2 class="slide-title">Struktur tata kelola & akuntabilitas transformasi digital</h2>
     </div>
     <div class="layout-two-column">
         <div class="left-col">
@@ -420,7 +535,7 @@ create a web app based on this. i want to put it in my VPS. i want it to have fu
 <div class="slide-container">
     <div class="slide-header">
         <div class="indicator-badge">B4</div>
-        <h2 class="slide-title">Kesesuaian dengan model bisnis & proposisi nilai</h2>
+        <h2 class="slide-title">Kesesuaian transformasi digital dengan model bisnis & proposisi nilai</h2>
     </div>
     <div class="layout-two-column">
         <div class="left-col">
@@ -446,7 +561,7 @@ create a web app based on this. i want to put it in my VPS. i want it to have fu
 <div class="slide-container">
     <div class="slide-header">
         <div class="indicator-badge">B5</div>
-        <h2 class="slide-title">Kesesuaian regulasi & lingkungan eksternal</h2>
+        <h2 class="slide-title">Kesesuaian transformasi digital dengan regulasi & lingkungan eksternal</h2>
     </div>
     <div class="layout-two-column">
         <div class="left-col">
@@ -477,7 +592,7 @@ create a web app based on this. i want to put it in my VPS. i want it to have fu
     <div class="layout-two-column">
         <div class="left-col">
             <div class="section-title">Penjelasan Indikator</div>
-            <p>Menilai persepsi pimpinan mengenai urgensi transformasi digital untuk daya saing perusahaan.</p>
+            <p>Menilai persepsi pimpinan organisasi mengenai urgensi transformasi digital untuk daya saing perusahaan.</p>
             <div class="rationale-box">
                 <h4>Rationale</h4>
                 <p>Kesadaran pimpinan menentukan seberapa cepat organisasi dapat memobilisasi sumber dayanya.</p>
@@ -493,9 +608,67 @@ create a web app based on this. i want to put it in my VPS. i want it to have fu
     <i class="fa-solid fa-fire watermark"></i>
 </div>
 
+<!-- RECAP DIMENSION B (VERBATIM TEXT) -->
+<div class="slide-container">
+    <div class="slide-header">
+        <div class="indicator-badge"><i class="fa-solid fa-list-ul"></i></div>
+        <h2 class="slide-title">REKAPITULASI: DIMENSI BUSINESS (B)</h2>
+    </div>
+    <div class="content-area">
+        <div class="recap-grid">
+            <div class="recap-card">
+                <h4>B1: Kejelasan visi & tujuan strategis transformasi digital</h4>
+                <ul>
+                    <li><span>B1.1</span> Visi transformasi digital perusahaan terdokumentasi dan dikomunikasikan secara jelas.</li>
+                    <li><span>B1.2</span> Pimpinan unit/bagian memahami tujuan strategis transformasi digital perusahaan.</li>
+                </ul>
+            </div>
+            <div class="recap-card">
+                <h4>B2: Integrasi keberlanjutan (bisnis & lingkungan) dalam strategi transformasi digital</h4>
+                <ul>
+                    <li><span>B2.1</span> Strategi transformasi digital perusahaan secara eksplisit memasukkan tujuan keberlanjutan jangka panjang.</li>
+                    <li><span>B2.2</span> Dampak lingkungan dipertimbangkan secara sistematis dalam perencanaan dan pelaksanaan inisiatif transformasi digital.</li>
+                    <li><span>B2.3</span> Perusahaan memiliki KPI/target keberlanjutan yang terhubung dengan program transformasi digital.</li>
+                </ul>
+            </div>
+            <div class="recap-card">
+                <h4>B3: Struktur tata kelola & akuntabilitas transformasi digital</h4>
+                <ul>
+                    <li><span>B3.1</span> Terdapat struktur tata kelola formal yang bertanggung jawab mengarahkan transformasi digital.</li>
+                    <li><span>B3.2</span> Peran dan akuntabilitas terkait transformasi digital ditetapkan secara jelas di tingkat organisasi.</li>
+                </ul>
+            </div>
+            <div class="recap-card">
+                <h4>B4: Kesesuaian transformasi digital dengan model bisnis & proposisi nilai</h4>
+                <ul>
+                    <li><span>B4.1</span> Inisiatif transformasi digital dirancang untuk memperkuat model bisnis dan proposisi nilai perusahaan.</li>
+                    <li><span>B4.2</span> Setiap proyek digital dievaluasi berdasarkan kontribusinya terhadap cara perusahaan menciptakan dan menangkap nilai.</li>
+                </ul>
+            </div>
+            <div class="recap-card">
+                <h4>B5: Kesesuaian transformasi digital dengan regulasi & lingkungan eksternal</h4>
+                <ul>
+                    <li><span>B5.1</span> Perencanaan transformasi digital mempertimbangkan persyaratan regulasi dan kepatuhan yang relevan.</li>
+                    <li><span>B5.2</span> Perubahan regulasi eksternal dipantau secara rutin dan digunakan sebagai masukan dalam perencanaan transformasi digital.</li>
+                </ul>
+            </div>
+            <div class="recap-card">
+                <h4>B6: Persepsi kebutuhan & urgensi transformasi digital</h4>
+                <ul>
+                    <li><span>B6.1</span> Pimpinan organisasi memandang transformasi digital sebagai kebutuhan yang mendesak untuk keberlangsungan dan daya saing perusahaan.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- ========================================== -->
 <!-- BINA: INFRASTRUCTURE DIMENSION -->
 <!-- ========================================== -->
+<div class="slide-container separator-slide">
+    <div class="sub-label" style="color: #f8fafc;">Dimension I</div>
+    <h1 style="color: #22d3ee; font-size: 56px;">Infrastructure, Data & Technology</h1>
+</div>
 
 <!-- I1 -->
 <div class="slide-container">
@@ -605,7 +778,7 @@ create a web app based on this. i want to put it in my VPS. i want it to have fu
 <div class="slide-container">
     <div class="slide-header">
         <div class="indicator-badge">I6</div>
-        <h2 class="slide-title">Pemanfaatan teknologi digital operasional</h2>
+        <h2 class="slide-title">Pemanfaatan teknologi digital operasional (ERP/CRM/IoT, dsb.)</h2>
     </div>
     <div class="layout-two-column">
         <div class="left-col">
@@ -627,15 +800,66 @@ create a web app based on this. i want to put it in my VPS. i want it to have fu
     <i class="fa-solid fa-microchip watermark"></i>
 </div>
 
+<!-- RECAP DIMENSION I (VERBATIM TEXT) -->
+<div class="slide-container">
+    <div class="slide-header">
+        <div class="indicator-badge"><i class="fa-solid fa-list-ul"></i></div>
+        <h2 class="slide-title">REKAPITULASI: DIMENSI INFRASTRUCTURE (I)</h2>
+    </div>
+    <div class="content-area">
+        <div class="recap-grid">
+            <div class="recap-card">
+                <h4>I1: Kesiapan dan keandalan infrastruktur TI inti</h4>
+                <ul>
+                    <li><span>I1.1</span> Infrastruktur TI inti perusahaan andal untuk mendukung operasional sehari-hari.</li>
+                    <li><span>I1.2</span> Kapasitas infrastruktur TI direncanakan untuk mendukung peningkatan kebutuhan digital di masa depan.</li>
+                </ul>
+            </div>
+            <div class="recap-card">
+                <h4>I2: Integrasi & interoperabilitas sistem/aplikasi</h4>
+                <ul>
+                    <li><span>I2.1</span> Sistem dan aplikasi utama perusahaan terintegrasi sehingga meminimalkan duplikasi input data dan pekerjaan manual.</li>
+                    <li><span>I2.2</span> Data penting dapat mengalir secara otomatis antar sistem dan aplikasi utama.</li>
+                </ul>
+            </div>
+            <div class="recap-card">
+                <h4>I4: Kapasitas analitik & pemanfaatan platform data/AI</h4>
+                <ul>
+                    <li><span>I4.1</span> Perusahaan memiliki platform data dan analitik yang memadai untuk mendukung pemantauan kinerja dan pengambilan keputusan.</li>
+                    <li><span>I4.2</span> Perusahaan menerapkan analitik lanjutan (misalnya prediktif/AI) untuk mendukung keputusan strategis.</li>
+                </ul>
+            </div>
+            <div class="recap-card">
+                <h4>I5: Keamanan siber & perlindungan privasi data</h4>
+                <ul>
+                    <li><span>I5.1</span> Kontrol keamanan informasi dan perlindungan data pribadi diterapkan secara memadai.</li>
+                    <li><span>I5.2</span> Risiko keamanan siber diidentifikasi dan ditangani secara berkala.</li>
+                </ul>
+            </div>
+            <div class="recap-card">
+                <h4>I6: Pemanfaatan teknologi digital operasional (ERP/CRM/IoT, dsb.)</h4>
+                <ul>
+                    <li><span>I6.1</span> Aplikasi atau teknologi digital operasional dimanfaatkan secara luas dalam proses bisnis utama.</li>
+                    <li><span>I6.2</span> Solusi teknologi digital yang digunakan selaras dengan kebutuhan operasional sehari-hari.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- ========================================== -->
 <!-- BINA: NURTURING PEOPLE DIMENSION -->
 <!-- ========================================== -->
+<div class="slide-container separator-slide">
+    <div class="sub-label" style="color: #f8fafc;">Dimension N</div>
+    <h1 style="color: #22d3ee; font-size: 56px;">Nurturing People & Culture</h1>
+</div>
 
 <!-- N1 -->
 <div class="slide-container">
     <div class="slide-header">
         <div class="indicator-badge">N1</div>
-        <h2 class="slide-title">Dukungan & komitmen kepemimpinan</h2>
+        <h2 class="slide-title">Kebutuhan strategis untuk kinerja & daya saing</h2>
     </div>
     <div class="layout-two-column">
         <div class="left-col">
@@ -661,7 +885,7 @@ create a web app based on this. i want to put it in my VPS. i want it to have fu
 <div class="slide-container">
     <div class="slide-header">
         <div class="indicator-badge">N2</div>
-        <h2 class="slide-title">Kompetensi & literasi digital karyawan</h2>
+        <h2 class="slide-title">Kebutuhan untuk menangkap peluang bisnis digital</h2>
     </div>
     <div class="layout-two-column">
         <div class="left-col">
@@ -687,7 +911,7 @@ create a web app based on this. i want to put it in my VPS. i want it to have fu
 <div class="slide-container">
     <div class="slide-header">
         <div class="indicator-badge">N3</div>
-        <h2 class="slide-title">Program pelatihan, reskilling & upskilling</h2>
+        <h2 class="slide-title">Kebutuhan karena keterbatasan cara kerja saat ini</h2>
     </div>
     <div class="layout-two-column">
         <div class="left-col">
@@ -713,7 +937,7 @@ create a web app based on this. i want to put it in my VPS. i want it to have fu
 <div class="slide-container">
     <div class="slide-header">
         <div class="indicator-badge">N4</div>
-        <h2 class="slide-title">Budaya inovasi & eksperimen digital</h2>
+        <h2 class="slide-title">Kebutuhan untuk business sustainability & ketahanan bisnis</h2>
     </div>
     <div class="layout-two-column">
         <div class="left-col">
@@ -761,15 +985,66 @@ create a web app based on this. i want to put it in my VPS. i want it to have fu
     <i class="fa-solid fa-people-arrows watermark"></i>
 </div>
 
+<!-- RECAP DIMENSION N (VERBATIM TEXT) -->
+<div class="slide-container">
+    <div class="slide-header">
+        <div class="indicator-badge"><i class="fa-solid fa-list-ul"></i></div>
+        <h2 class="slide-title">REKAPITULASI: DIMENSI NURTURING PEOPLE (N)</h2>
+    </div>
+    <div class="content-area">
+        <div class="recap-grid">
+            <div class="recap-card">
+                <h4>N1: Dukungan & komitmen kepemimpinan terhadap transformasi digital</h4>
+                <ul>
+                    <li><span>N1.1</span> Pimpinan puncak secara aktif menjadi sponsor dan teladan dalam inisiatif transformasi digital.</li>
+                    <li><span>N1.2</span> Pimpinan secara konsisten mengomunikasikan pentingnya transformasi digital kepada seluruh level organisasi.</li>
+                </ul>
+            </div>
+            <div class="recap-card">
+                <h4>N2: Kompetensi & literasi digital karyawan</h4>
+                <ul>
+                    <li><span>N2.1</span> Karyawan memiliki literasi dan kompetensi digital yang memadai untuk mendukung perubahan cara kerja.</li>
+                    <li><span>N2.2</span> Organisasi secara berkala memetakan kesenjangan kompetensi digital karyawan dan menindaklanjutinya.</li>
+                </ul>
+            </div>
+            <div class="recap-card">
+                <h4>N3: Program pelatihan, reskilling, & upskilling terkait digital</h4>
+                <ul>
+                    <li><span>N3.1</span> Perusahaan menyediakan program pelatihan/reskilling/upskilling yang relevan dengan kebutuhan transformasi digital.</li>
+                    <li><span>N3.2</span> Karyawan memiliki kesempatan yang memadai untuk mengikuti pelatihan terkait teknologi dan cara kerja digital.</li>
+                </ul>
+            </div>
+            <div class="recap-card">
+                <h4>N4: Budaya organisasi yang mendukung inovasi & eksperimen digital</h4>
+                <ul>
+                    <li><span>N4.1</span> Budaya organisasi mendorong eksperimen dan uji coba solusi digital baru.</li>
+                    <li><span>N4.2</span> Ide inovasi digital dari karyawan diapresiasi dan ditindaklanjuti melalui mekanisme yang jelas.</li>
+                </ul>
+            </div>
+            <div class="recap-card">
+                <h4>N5: Kolaborasi lintas fungsi & berbagi pengetahuan</h4>
+                <ul>
+                    <li><span>N5.1</span> Kolaborasi lintas fungsi/divisi difasilitasi dalam merancang dan menjalankan inisiatif transformasi digital.</li>
+                    <li><span>N5.2</span> Pembelajaran dan praktik terbaik terkait digital dibagikan secara aktif antar unit organisasi.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- ========================================== -->
 <!-- BINA: AGILITY & PROCESS DIMENSION -->
 <!-- ========================================== -->
+<div class="slide-container separator-slide">
+    <div class="sub-label" style="color: #f8fafc;">Dimension A</div>
+    <h1 style="color: #22d3ee; font-size: 56px;">Agility & Process Digitalization</h1>
+</div>
 
 <!-- A1 -->
 <div class="slide-container">
     <div class="slide-header">
         <div class="indicator-badge">A1</div>
-        <h2 class="slide-title">Tingkat digitalisasi proses bisnis inti</h2>
+        <h2 class="slide-title">Aspirasi menjadi organisasi yang lebih digital</h2>
     </div>
     <div class="layout-two-column">
         <div class="left-col">
@@ -795,7 +1070,7 @@ create a web app based on this. i want to put it in my VPS. i want it to have fu
 <div class="slide-container">
     <div class="slide-header">
         <div class="indicator-badge">A2</div>
-        <h2 class="slide-title">Fleksibilitas & standar proses</h2>
+        <h2 class="slide-title">Niat memperluas dan memperdalam inisiatif digital</h2>
     </div>
     <div class="layout-two-column">
         <div class="left-col">
@@ -821,7 +1096,7 @@ create a web app based on this. i want to put it in my VPS. i want it to have fu
 <div class="slide-container">
     <div class="slide-header">
         <div class="indicator-badge">A3</div>
-        <h2 class="slide-title">Pemanfaatan data & analitik untuk keputusan</h2>
+        <h2 class="slide-title">Pemanfaatan data & analitik dalam pengambilan keputusan</h2>
     </div>
     <div class="layout-two-column">
         <div class="left-col">
@@ -869,6 +1144,46 @@ create a web app based on this. i want to put it in my VPS. i want it to have fu
     <i class="fa-solid fa-puzzle-piece watermark"></i>
 </div>
 
+<!-- RECAP DIMENSION A (VERBATIM TEXT) -->
+<div class="slide-container">
+    <div class="slide-header">
+        <div class="indicator-badge"><i class="fa-solid fa-list-ul"></i></div>
+        <h2 class="slide-title">REKAPITULASI: DIMENSI AGILITY (A)</h2>
+    </div>
+    <div class="content-area">
+        <div class="recap-grid">
+            <div class="recap-card">
+                <h4>A1: Tingkat digitalisasi proses bisnis inti</h4>
+                <ul>
+                    <li><span>A1.1</span> Proses bisnis inti telah terdigitalisasi sehingga mengurangi pekerjaan manual berulang.</li>
+                    <li><span>A1.2</span> Alur kerja utama didukung oleh sistem atau aplikasi digital secara end-to-end.</li>
+                </ul>
+            </div>
+            <div class="recap-card">
+                <h4>A2: Fleksibilitas & standar proses untuk merespons perubahan</h4>
+                <ul>
+                    <li><span>A2.1</span> Proses kerja dirancang fleksibel untuk menyesuaikan perubahan kebutuhan bisnis.</li>
+                    <li><span>A2.2</span> Perusahaan mampu menyesuaikan proses bisnis dengan cepat ketika terjadi perubahan kebutuhan atau regulasi.</li>
+                </ul>
+            </div>
+            <div class="recap-card">
+                <h4>A3: Pemanfaatan data & analitik dalam pengambilan keputusan</h4>
+                <ul>
+                    <li><span>A3.1</span> Keputusan manajerial penting didasarkan pada data dan analitik.</li>
+                    <li><span>A3.2</span> Manajemen menggunakan laporan atau dashboard kinerja secara rutin dalam proses pengambilan keputusan.</li>
+                </ul>
+            </div>
+            <div class="recap-card">
+                <h4>A4: Integrasi proses lintas unit & end-to-end</h4>
+                <ul>
+                    <li><span>A4.1</span> Proses lintas unit terintegrasi secara digital dari hulu ke hilir.</li>
+                    <li><span>A4.2</span> Integrasi proses internal menghasilkan pengalaman layanan yang lebih mulus bagi pelanggan atau mitra.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- ========================================== -->
 <!-- NUSA SECTION SEPARATOR -->
 <!-- ========================================== -->
@@ -881,8 +1196,12 @@ create a web app based on this. i want to put it in my VPS. i want it to have fu
 <!-- ========================================== -->
 <!-- NUSA: NEED STRENGTH DIMENSION -->
 <!-- ========================================== -->
+<div class="slide-container separator-slide nusa-sep">
+    <div class="sub-label" style="color: #f8fafc;">Dimension N</div>
+    <h1 style="color: #10b981; font-size: 56px;">Need Strength (Business Necessity)</h1>
+</div>
 
-<!-- N1 -->
+<!-- NUSA N1 -->
 <div class="slide-container">
     <div class="slide-header">
         <div class="indicator-badge nusa">N1</div>
@@ -909,7 +1228,7 @@ create a web app based on this. i want to put it in my VPS. i want it to have fu
     <i class="fa-solid fa-bullseye watermark" style="color:rgba(16, 185, 129, 0.03)"></i>
 </div>
 
-<!-- N2 -->
+<!-- NUSA N2 -->
 <div class="slide-container">
     <div class="slide-header">
         <div class="indicator-badge nusa">N2</div>
@@ -935,7 +1254,7 @@ create a web app based on this. i want to put it in my VPS. i want it to have fu
     <i class="fa-solid fa-rocket watermark" style="color:rgba(16, 185, 129, 0.03)"></i>
 </div>
 
-<!-- N3 -->
+<!-- NUSA N3 -->
 <div class="slide-container">
     <div class="slide-header">
         <div class="indicator-badge nusa">N3</div>
@@ -961,7 +1280,7 @@ create a web app based on this. i want to put it in my VPS. i want it to have fu
     <i class="fa-solid fa-triangle-exclamation watermark" style="color:rgba(16, 185, 129, 0.03)"></i>
 </div>
 
-<!-- N4 -->
+<!-- NUSA N4 -->
 <div class="slide-container">
     <div class="slide-header">
         <div class="indicator-badge nusa">N4</div>
@@ -987,9 +1306,54 @@ create a web app based on this. i want to put it in my VPS. i want it to have fu
     <i class="fa-solid fa-shield-halved watermark" style="color:rgba(16, 185, 129, 0.03)"></i>
 </div>
 
+<!-- RECAP NUSA DIMENSION N (VERBATIM TEXT) -->
+<div class="slide-container">
+    <div class="slide-header">
+        <div class="indicator-badge nusa"><i class="fa-solid fa-list-ul"></i></div>
+        <h2 class="slide-title">REKAPITULASI: DIMENSI NEED STRENGTH (N)</h2>
+    </div>
+    <div class="content-area">
+        <div class="recap-grid">
+            <div class="recap-card nusa-recap-card">
+                <h4>N1: Kebutuhan strategis untuk kinerja & daya saing</h4>
+                <ul>
+                    <li><span>N1.1</span> Transformasi digital penting untuk mencapai tujuan bisnis utama perusahaan.</li>
+                    <li><span>N1.2</span> Tanpa transformasi digital, daya saing perusahaan berisiko menurun.</li>
+                    <li><span>N1.3</span> Digitalisasi adalah syarat mutlak untuk tetap relevan di industri saat ini.</li>
+                </ul>
+            </div>
+            <div class="recap-card nusa-recap-card">
+                <h4>N2: Kebutuhan untuk menangkap peluang bisnis digital</h4>
+                <ul>
+                    <li><span>N2.1</span> Kami melihat peluang bisnis baru yang membutuhkan solusi digital.</li>
+                    <li><span>N2.2</span> Model bisnis perusahaan perlu menjadi lebih digital untuk menangkap peluang pasar.</li>
+                </ul>
+            </div>
+            <div class="recap-card nusa-recap-card">
+                <h4>N3: Kebutuhan karena keterbatasan cara kerja saat ini</h4>
+                <ul>
+                    <li><span>N3.1</span> Cara kerja saat ini terlalu manual untuk mendukung pertumbuhan di masa depan.</li>
+                    <li><span>N3.2</span> Keterbatasan sistem yang ada mendorong kebutuhan transformasi digital.</li>
+                </ul>
+            </div>
+            <div class="recap-card nusa-recap-card">
+                <h4>N4: Kebutuhan untuk business sustainability & ketahanan bisnis</h4>
+                <ul>
+                    <li><span>N4.1</span> Transformasi digital diperlukan untuk menjaga keberlangsungan dan kesehatan finansial bisnis dalam jangka panjang.</li>
+                    <li><span>N4.2</span> Tanpa transformasi digital, perusahaan akan kesulitan bertahan menghadapi perubahan dan tekanan kompetitif.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- ========================================== -->
 <!-- NUSA: URGENCY DIMENSION -->
 <!-- ========================================== -->
+<div class="slide-container separator-slide nusa-sep">
+    <div class="sub-label" style="color: #f8fafc;">Dimension U</div>
+    <h1 style="color: #10b981; font-size: 56px;">Urgency of Timing</h1>
+</div>
 
 <!-- U1 -->
 <div class="slide-container">
@@ -1021,7 +1385,7 @@ create a web app based on this. i want to put it in my VPS. i want it to have fu
 <div class="slide-container">
     <div class="slide-header">
         <div class="indicator-badge nusa">U2</div>
-        <h2 class="slide-title">Kebutuhan mempercepat respon industri</h2>
+        <h2 class="slide-title">Kebutuhan untuk mempercepat respon terhadap perubahan industri</h2>
     </div>
     <div class="layout-two-column">
         <div class="left-col">
@@ -1043,9 +1407,39 @@ create a web app based on this. i want to put it in my VPS. i want it to have fu
     <i class="fa-solid fa-bolt watermark" style="color:rgba(16, 185, 129, 0.03)"></i>
 </div>
 
+<!-- RECAP NUSA DIMENSION U (VERBATIM TEXT) -->
+<div class="slide-container">
+    <div class="slide-header">
+        <div class="indicator-badge nusa"><i class="fa-solid fa-list-ul"></i></div>
+        <h2 class="slide-title">REKAPITULASI: DIMENSI URGENCY (U)</h2>
+    </div>
+    <div class="content-area">
+        <div class="recap-grid">
+            <div class="recap-card nusa-recap-card">
+                <h4>U1: Risiko jika transformasi digital terlambat</h4>
+                <ul>
+                    <li><span>U1.1</span> Transformasi digital tidak dapat ditunda dalam beberapa tahun ke depan.</li>
+                    <li><span>U1.2</span> Penundaan transformasi digital meningkatkan risiko perusahaan tertinggal dari pesaing.</li>
+                </ul>
+            </div>
+            <div class="recap-card nusa-recap-card">
+                <h4>U2: Kebutuhan untuk mempercepat respon terhadap perubahan industri</h4>
+                <ul>
+                    <li><span>U2.1</span> Perusahaan perlu mempercepat transformasi digital untuk mengikuti perubahan di industri.</li>
+                    <li><span>U2.2</span> Perusahaan perlu meningkatkan kecepatan respons digital terhadap dinamika pasar.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- ========================================== -->
 <!-- NUSA: STAKEHOLDER DEMAND DIMENSION -->
 <!-- ========================================== -->
+<div class="slide-container separator-slide nusa-sep">
+    <div class="sub-label" style="color: #f8fafc;">Dimension S</div>
+    <h1 style="color: #10b981; font-size: 56px;">Stakeholder & Market Demand</h1>
+</div>
 
 <!-- S1 -->
 <div class="slide-container">
@@ -1077,7 +1471,7 @@ create a web app based on this. i want to put it in my VPS. i want it to have fu
 <div class="slide-container">
     <div class="slide-header">
         <div class="indicator-badge nusa">S2</div>
-        <h2 class="slide-title">Tekanan regulasi & pemangku kepentingan</h2>
+        <h2 class="slide-title">Tekanan regulasi & pemangku kepentingan eksternal</h2>
     </div>
     <div class="layout-two-column">
         <div class="left-col">
@@ -1103,7 +1497,7 @@ create a web app based on this. i want to put it in my VPS. i want it to have fu
 <div class="slide-container">
     <div class="slide-header">
         <div class="indicator-badge nusa">S3</div>
-        <h2 class="slide-title">Kebutuhan tekanan environmental sustainability</h2>
+        <h2 class="slide-title">Kebutuhan karena tekanan environmental sustainability (ESG/green/regulasi/pasar)</h2>
     </div>
     <div class="layout-two-column">
         <div class="left-col">
@@ -1125,9 +1519,46 @@ create a web app based on this. i want to put it in my VPS. i want it to have fu
     <i class="fa-solid fa-earth-americas watermark" style="color:rgba(16, 185, 129, 0.03)"></i>
 </div>
 
+<!-- RECAP NUSA DIMENSION S (VERBATIM TEXT) -->
+<div class="slide-container">
+    <div class="slide-header">
+        <div class="indicator-badge nusa"><i class="fa-solid fa-list-ul"></i></div>
+        <h2 class="slide-title">REKAPITULASI: DIMENSI STAKEHOLDER DEMAND (S)</h2>
+    </div>
+    <div class="content-area">
+        <div class="recap-grid">
+            <div class="recap-card nusa-recap-card">
+                <h4>S1: Tekanan pelanggan & pasar untuk layanan digital</h4>
+                <ul>
+                    <li><span>S1.1</span> Pelanggan semakin mengharapkan layanan dan interaksi yang serba digital.</li>
+                    <li><span>S1.2</span> Pengalaman digital dari pesaing meningkatkan ekspektasi pelanggan terhadap perusahaan.</li>
+                </ul>
+            </div>
+            <div class="recap-card nusa-recap-card">
+                <h4>S2: Tekanan regulasi & pemangku kepentingan eksternal</h4>
+                <ul>
+                    <li><span>S2.1</span> Regulasi dan standar industri mendorong perusahaan menjadi lebih digital.</li>
+                    <li><span>S2.2</span> Mitra bisnis mengharapkan integrasi proses yang lebih digital dengan perusahaan kami.</li>
+                </ul>
+            </div>
+            <div class="recap-card nusa-recap-card">
+                <h4>S3: Kebutuhan karena tekanan environmental sustainability (ESG/green/regulasi/pasar)</h4>
+                <ul>
+                    <li><span>S3.1</span> Tekanan dari pelanggan, regulator, atau publik terkait kinerja lingkungan mendorong kebutuhan transformasi digital.</li>
+                    <li><span>S3.2</span> Data dan teknologi digital diperlukan untuk mengukur dan melaporkan kinerja lingkungan (misalnya emisi atau konsumsi energi).</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- ========================================== -->
 <!-- NUSA: AMBITION DIMENSION -->
 <!-- ========================================== -->
+<div class="slide-container separator-slide nusa-sep">
+    <div class="sub-label" style="color: #f8fafc;">Dimension A</div>
+    <h1 style="color: #10b981; font-size: 56px;">Ambition & Intent</h1>
+</div>
 
 <!-- A1 -->
 <div class="slide-container">
@@ -1138,7 +1569,7 @@ create a web app based on this. i want to put it in my VPS. i want it to have fu
     <div class="layout-two-column">
         <div class="left-col">
             <div class="section-title nusa-text">Penjelasan Indikator</div>
-            <p>Cita-cita strategis perusahaan untuk berubah menjadi organisasi digital yang memimpin *value creation*.</p>
+            <p>Cita-cita strategis perusahaan untuk berubah menjadi organisasi digital yang memimpin di industri.</p>
             <div class="rationale-box nusa-box">
                 <h4 style="color:#10b981;">Rationale</h4>
                 <p>Aspirasi tinggi mencerminkan pergeseran *mindset* dari sekadar reaktif menjadi proaktif dalam mendisrupsi proses internal.</p>
@@ -1159,7 +1590,7 @@ create a web app based on this. i want to put it in my VPS. i want it to have fu
 <div class="slide-container">
     <div class="slide-header">
         <div class="indicator-badge nusa">A2</div>
-        <h2 class="slide-title">Niat memperluas inisiatif digital</h2>
+        <h2 class="slide-title">Niat memperluas dan memperdalam inisiatif digital</h2>
     </div>
     <div class="layout-two-column">
         <div class="left-col">
@@ -1181,14 +1612,134 @@ create a web app based on this. i want to put it in my VPS. i want it to have fu
     <i class="fa-solid fa-arrow-trend-up watermark" style="color:rgba(16, 185, 129, 0.03)"></i>
 </div>
 
+<!-- RECAP NUSA DIMENSION A (VERBATIM TEXT) -->
+<div class="slide-container">
+    <div class="slide-header">
+        <div class="indicator-badge nusa"><i class="fa-solid fa-list-ul"></i></div>
+        <h2 class="slide-title">REKAPITULASI: DIMENSI AMBITION (A)</h2>
+    </div>
+    <div class="content-area">
+        <div class="recap-grid">
+            <div class="recap-card nusa-recap-card">
+                <h4>A1: Aspirasi menjadi organisasi yang lebih digital</h4>
+                <ul>
+                    <li><span>A1.1</span> Perusahaan memiliki aspirasi untuk menjadi organisasi yang lebih digital.</li>
+                    <li><span>A1.2</span> Perusahaan ingin menggunakan teknologi digital untuk mengubah cara menciptakan nilai.</li>
+                </ul>
+            </div>
+            <div class="recap-card nusa-recap-card">
+                <h4>A2: Niat memperluas dan memperdalam inisiatif digital</h4>
+                <ul>
+                    <li><span>A2.1</span> Manajemen berniat memperluas skala inisiatif digital dalam beberapa tahun ke depan.</li>
+                    <li><span>A2.2</span> Digital menjadi salah satu pilar utama strategi bisnis perusahaan.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- ========================================== -->
-<!-- CLOSING & DISCUSSION SLIDE -->
+<!-- REKAPITULASI & CLOSING SLIDE -->
 <!-- ========================================== -->
-<div class="slide-container separator-slide">
-    <i class="fa-solid fa-comments" style="font-size: 80px; color: #22d3ee; margin-bottom: 25px;"></i>
-    <h1 style="font-size: 56px;">Sesi Diskusi & Validasi</h1>
-    <p style="font-size: 20px; max-width: 800px; margin: 0 auto; color: #cbd5e1;">Berdasarkan pemaparan seluruh butir survei, mari kita validasi kesesuaiannya dengan kondisi dan tantangan riil yang dihadapi oleh unit kerja saat ini.</p>
-    <div style="margin-top: 40px; border-top: 1px solid #334155; padding-top: 20px; color: #10b981; font-weight: 700; letter-spacing: 2px;">
+<div class="slide-container separator-slide" style="padding: 40px 60px; justify-content: flex-start; align-items: stretch; text-align: left;">
+    <h1 style="font-size: 40px; color: #22d3ee; margin-bottom: 25px; text-align: center; width: 100%;">Rekapitulasi Indikator DTI</h1>
+    
+    <div style="display: flex; gap: 30px; width: 100%; flex-grow: 1; z-index: 1;">
+        <!-- BINA COLUMN -->
+        <div style="flex: 1.6; background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(34, 211, 238, 0.3); border-radius: 12px; padding: 25px; display: flex; flex-direction: column;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #22d3ee; padding-bottom: 10px; margin-bottom: 20px;">
+                <h3 style="color: #22d3ee; font-size: 22px; margin: 0;">BINA Index</h3>
+                <span style="background: rgba(34, 211, 238, 0.1); color: #22d3ee; padding: 4px 10px; border-radius: 6px; font-weight: 700; font-size: 14px;">40 Items</span>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; flex-grow: 1;">
+                <div>
+                    <strong style="color: #f8fafc; font-size: 15px; display: block; margin-bottom: 8px;">Business & Governance (12)</strong>
+                    <ul style="color: #cbd5e1; list-style: none; padding: 0; margin: 0; font-size: 12px; line-height: 1.6;">
+                        <li><span style="color:#22d3ee; font-weight:800; display:inline-block; width:22px;">B1</span> Kejelasan visi & tujuan strategis transformasi digital</li>
+                        <li><span style="color:#22d3ee; font-weight:800; display:inline-block; width:22px;">B2</span> Integrasi keberlanjutan (bisnis & lingkungan) dalam strategi transformasi digital</li>
+                        <li><span style="color:#22d3ee; font-weight:800; display:inline-block; width:22px;">B3</span> Struktur tata kelola & akuntabilitas transformasi digital</li>
+                        <li><span style="color:#22d3ee; font-weight:800; display:inline-block; width:22px;">B4</span> Kesesuaian transformasi digital dengan model bisnis & proposisi nilai</li>
+                        <li><span style="color:#22d3ee; font-weight:800; display:inline-block; width:22px;">B5</span> Kesesuaian transformasi digital dengan regulasi & lingkungan eksternal</li>
+                        <li><span style="color:#22d3ee; font-weight:800; display:inline-block; width:22px;">B6</span> Persepsi kebutuhan & urgensi transformasi digital</li>
+                    </ul>
+                    
+                    <strong style="color: #f8fafc; font-size: 15px; display: block; margin-top: 15px; margin-bottom: 8px;">Nurturing People (10)</strong>
+                    <ul style="color: #cbd5e1; list-style: none; padding: 0; margin: 0; font-size: 12px; line-height: 1.6;">
+                        <li><span style="color:#22d3ee; font-weight:800; display:inline-block; width:22px;">N1</span> Dukungan & komitmen kepemimpinan terhadap transformasi digital</li>
+                        <li><span style="color:#22d3ee; font-weight:800; display:inline-block; width:22px;">N2</span> Kompetensi & literasi digital karyawan</li>
+                        <li><span style="color:#22d3ee; font-weight:800; display:inline-block; width:22px;">N3</span> Program pelatihan, reskilling, & upskilling terkait digital</li>
+                        <li><span style="color:#22d3ee; font-weight:800; display:inline-block; width:22px;">N4</span> Budaya organisasi yang mendukung inovasi & eksperimen digital</li>
+                        <li><span style="color:#22d3ee; font-weight:800; display:inline-block; width:22px;">N5</span> Kolaborasi lintas fungsi & berbagi pengetahuan</li>
+                    </ul>
+                </div>
+                <div>
+                    <strong style="color: #f8fafc; font-size: 15px; display: block; margin-bottom: 8px;">Infrastructure & Data (10)</strong>
+                    <ul style="color: #cbd5e1; list-style: none; padding: 0; margin: 0; font-size: 12px; line-height: 1.6;">
+                        <li><span style="color:#22d3ee; font-weight:800; display:inline-block; width:22px;">I1</span> Kesiapan dan keandalan infrastruktur TI inti</li>
+                        <li><span style="color:#22d3ee; font-weight:800; display:inline-block; width:22px;">I2</span> Integrasi & interoperabilitas sistem/aplikasi</li>
+                        <li><span style="color:#22d3ee; font-weight:800; display:inline-block; width:22px;">I4</span> Kapasitas analitik & pemanfaatan platform data/AI</li>
+                        <li><span style="color:#22d3ee; font-weight:800; display:inline-block; width:22px;">I5</span> Keamanan siber & perlindungan privasi data</li>
+                        <li><span style="color:#22d3ee; font-weight:800; display:inline-block; width:22px;">I6</span> Pemanfaatan teknologi digital operasional (ERP/CRM/IoT, dsb.)</li>
+                    </ul>
+                    
+                    <strong style="color: #f8fafc; font-size: 15px; display: block; margin-top: 15px; margin-bottom: 8px;">Agility & Process (8)</strong>
+                    <ul style="color: #cbd5e1; list-style: none; padding: 0; margin: 0; font-size: 12px; line-height: 1.6;">
+                        <li><span style="color:#22d3ee; font-weight:800; display:inline-block; width:22px;">A1</span> Tingkat digitalisasi proses bisnis inti</li>
+                        <li><span style="color:#22d3ee; font-weight:800; display:inline-block; width:22px;">A2</span> Fleksibilitas & standar proses untuk merespons perubahan</li>
+                        <li><span style="color:#22d3ee; font-weight:800; display:inline-block; width:22px;">A3</span> Pemanfaatan data & analitik dalam pengambilan keputusan</li>
+                        <li><span style="color:#22d3ee; font-weight:800; display:inline-block; width:22px;">A4</span> Integrasi proses lintas unit & end-to-end</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- NUSA COLUMN -->
+        <div style="flex: 1; background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 12px; padding: 25px; display: flex; flex-direction: column;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #10b981; padding-bottom: 10px; margin-bottom: 20px;">
+                <h3 style="color: #10b981; font-size: 22px; margin: 0;">NUSA Index</h3>
+                <span style="background: rgba(16, 185, 129, 0.1); color: #10b981; padding: 4px 10px; border-radius: 6px; font-weight: 700; font-size: 14px;">22 Items</span>
+            </div>
+            
+            <div style="display: flex; flex-direction: column; gap: 15px; flex-grow: 1;">
+                <div>
+                    <strong style="color: #f8fafc; font-size: 15px; display: block; margin-bottom: 8px;">Need Strength (8)</strong>
+                    <ul style="color: #cbd5e1; list-style: none; padding: 0; margin: 0; font-size: 12px; line-height: 1.6;">
+                        <li><span style="color:#10b981; font-weight:800; display:inline-block; width:22px;">N1</span> Kebutuhan strategis untuk kinerja & daya saing</li>
+                        <li><span style="color:#10b981; font-weight:800; display:inline-block; width:22px;">N2</span> Kebutuhan untuk menangkap peluang bisnis digital</li>
+                        <li><span style="color:#10b981; font-weight:800; display:inline-block; width:22px;">N3</span> Kebutuhan karena keterbatasan cara kerja saat ini</li>
+                        <li><span style="color:#10b981; font-weight:800; display:inline-block; width:22px;">N4</span> Kebutuhan untuk business sustainability & ketahanan bisnis</li>
+                    </ul>
+                </div>
+                <div>
+                    <strong style="color: #f8fafc; font-size: 15px; display: block; margin-bottom: 8px;">Stakeholder Demand (6)</strong>
+                    <ul style="color: #cbd5e1; list-style: none; padding: 0; margin: 0; font-size: 12px; line-height: 1.6;">
+                        <li><span style="color:#10b981; font-weight:800; display:inline-block; width:22px;">S1</span> Tekanan pelanggan & pasar untuk layanan digital</li>
+                        <li><span style="color:#10b981; font-weight:800; display:inline-block; width:22px;">S2</span> Tekanan regulasi & pemangku kepentingan eksternal</li>
+                        <li><span style="color:#10b981; font-weight:800; display:inline-block; width:22px;">S3</span> Kebutuhan karena tekanan environmental sustainability (ESG/green/regulasi/pasar)</li>
+                    </ul>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <div>
+                        <strong style="color: #f8fafc; font-size: 15px; display: block; margin-bottom: 8px;">Urgency of Timing (4)</strong>
+                        <ul style="color: #cbd5e1; list-style: none; padding: 0; margin: 0; font-size: 12px; line-height: 1.6;">
+                            <li><span style="color:#10b981; font-weight:800; display:inline-block; width:22px;">U1</span> Risiko jika transformasi digital terlambat</li>
+                            <li><span style="color:#10b981; font-weight:800; display:inline-block; width:22px;">U2</span> Kebutuhan untuk mempercepat respon terhadap perubahan industri</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <strong style="color: #f8fafc; font-size: 15px; display: block; margin-bottom: 8px;">Ambition & Intent (4)</strong>
+                        <ul style="color: #cbd5e1; list-style: none; padding: 0; margin: 0; font-size: 12px; line-height: 1.6;">
+                            <li><span style="color:#10b981; font-weight:800; display:inline-block; width:22px;">A1</span> Aspirasi menjadi organisasi yang lebih digital</li>
+                            <li><span style="color:#10b981; font-weight:800; display:inline-block; width:22px;">A2</span> Niat memperluas dan memperdalam inisiatif digital</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div style="margin-top: 25px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px; color: #10b981; font-weight: 700; letter-spacing: 2px; font-size: 18px; z-index: 1; text-align: center; width: 100%;">
         TERIMA KASIH ATAS PARTISIPASI ANDA
     </div>
 </div>
@@ -1361,6 +1912,10 @@ create a web app based on this. i want to put it in my VPS. i want it to have fu
     <div class="page-num">NUSA LIST 2 / 2</div>
 </div>
 
+<!-- Tombol Salin Kode Mengambang -->
+<button class="copy-fab" onclick="copyCodeHTML()">
+    <i class="fa-solid fa-copy"></i> Copy Code HTML
+</button>
+
 </body>
 </html>
-```
